@@ -1,0 +1,117 @@
+SERVER.JS
+
+// app.get("/", (req,res) => {
+//     res.send("Welcome");
+// });
+
+
+function authentication(req, res, next) {
+    const { username, password } = req.body;
+
+    db.query('SELECT username, role FROM users WHERE username = ? AND password = ?', [username, password], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        req.user = results[0];
+        next();
+    });
+}
+function isAdmin(req, res, next)
+{
+    if(req.user && req.user.role === 'Admin')
+        next();
+    else
+        res.status(403).send({ message: 'Admin access required' });
+}
+
+
+// const autentication = (req, res, next) => {
+//     const authHeader = req.headers.authorization;
+//     if (!authHeader) {
+//         return res.status(401).send('Authorization required');
+//     }
+
+//     const base64Credentials = authHeader.split(' ')[1];
+//     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+//     const [username, password] = credentials.split(':');
+
+//     db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, users) => {
+//         if (err) throw err;
+//         if (users.length === 0) {
+//             return res.status(401).send('Invalid credentials');
+//         }
+
+//         req.user = users[0];
+//         next();
+//     });
+// };
+
+// const isAdmin = (req,res, next) => {
+//     if(req.user.role != 'admin')
+//         return res.status(403).send("Admin access required");
+//     next();
+// };
+
+
+app.post('/admin', (req, res) => {
+    const { username, password } = req.body;
+    db.query('INSERT INTO users (username, password, role) VALUES (?, ?, "admin")', [username, password], (err, result) => {
+        if (err) throw err;
+        res.send('Admin created successfully');
+    });
+});
+
+
+
+APP.JS
+
+login:
+    // console.log(username, password);
+    // if(username==="admin" && password==="admin123") {
+    //     currentUser = 'admin';
+    //     showAdminPage();
+    // } 
+    // else if(username==="user" && password==="user123") {
+    //     currentUser = 'user';
+    //     showUserPage();
+    // } 
+    // else {
+    //     alert('Invalid credentials');
+    // }
+
+function showAdminPage() {
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('login-container').style.display = 'none';
+
+    document.getElementById('admin-container').style.display = 'block';
+    document.getElementById('card-container').style.display = 'block';
+    // document.getElementById('display-cards').style.display = 'block';
+    fetchUsers();
+    clearDetails();
+}
+
+function showUserPage() {
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('login-container').style.display = 'none';
+
+    document.getElementById('admin-container').style.display = 'none';
+    document.getElementById('card-container').style.display = 'block';
+    // document.getElementById('display-cards').style.display = 'block';
+    fetchCards();
+    clearDetails();
+}
+
+function logout() {
+    currentUser = null;
+    document.getElementById('logout-btn').style.display = 'none';
+    document.getElementById('login-container').style.display = 'block';
+
+    document.getElementById('admin-container').style.display = 'none';
+    document.getElementById('card-container').style.display = 'none';
+    // document.getElementById('display-cards').style.display = 'none';
+}

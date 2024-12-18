@@ -1,0 +1,21 @@
+Create a new directory for your project:
+--> mkdir book-management-api
+--> cd book-management-api
+
+
+Initialize a new Node.js project:
+--> npm init -y
+
+Install express for REST API, body-parser for parsing and mysql for interacting with db:
+--> npm install express mysql body-parser
+
+
+npm install mysql exoress bcryptjs jsonwebtoken body-parser
+(npm install) --> for all npm installations
+
+npm start 
+   OR 
+node app.js
+   OR
+npm i -g nodemon
+nodemon app.js
